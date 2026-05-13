@@ -2,14 +2,14 @@
 -- CREATION DE LA BASE DE DONNEES
 -- =====================================================
 
-CREATE DATABASE IF NOT EXISTS gestion_commande;
-USE gestion_commande;
+CREATE DATABASE IF NOT EXISTS gestion_commande_l2E221_25_26;
+USE gestion_commande_l2E221_25_26;
 
 -- =====================================================
 -- SUPPRESSION DES TABLES SI ELLES EXISTENT
 -- =====================================================
 
-DROP TABLE IF EXISTS ligne_commande;
+DROP TABLE IF EXISTS produit_commande;
 DROP TABLE IF EXISTS commande;
 DROP TABLE IF EXISTS produit;
 DROP TABLE IF EXISTS client;
@@ -22,7 +22,7 @@ CREATE TABLE client (
     id_client INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100) NOT NULL,
-    telephone VARCHAR(20),
+    telephone VARCHAR(20) UNIQUE,
     email VARCHAR(150) UNIQUE,
     adresse VARCHAR(255)
 );
@@ -33,6 +33,7 @@ CREATE TABLE client (
 
 CREATE TABLE produit (
     id_produit INT AUTO_INCREMENT PRIMARY KEY,
+    reference VARCHAR(50) UNIQUE,
     libelle VARCHAR(150) NOT NULL,
     prix DECIMAL(10,2) NOT NULL,
     stock INT DEFAULT 0,
@@ -47,38 +48,32 @@ CREATE TABLE commande (
     id_commande INT AUTO_INCREMENT PRIMARY KEY,
     date_commande DATE NOT NULL,
     montant_total DECIMAL(10,2) DEFAULT 0,
-    statut VARCHAR(50),
+    statut ENUM('SOLDEE', 'NON SOLDEE') DEFAULT 'NON SOLDEE',
 
     id_client INT NOT NULL,
 
     CONSTRAINT fk_commande_client
         FOREIGN KEY (id_client)
         REFERENCES client(id_client)
-        ON DELETE CASCADE
 );
 
 -- =====================================================
 -- TABLE LIGNE_COMMANDE
 -- =====================================================
 
-CREATE TABLE ligne_commande (
+CREATE TABLE produit_commande (
     id_commande INT,
     id_produit INT,
-
     quantite INT NOT NULL,
     prix_unitaire DECIMAL(10,2) NOT NULL,
-
     PRIMARY KEY (id_commande, id_produit),
-
     CONSTRAINT fk_ligne_commande
         FOREIGN KEY (id_commande)
-        REFERENCES commande(id_commande)
-        ON DELETE CASCADE,
-
+        REFERENCES commande(id_commande),
     CONSTRAINT fk_ligne_produit
         FOREIGN KEY (id_produit)
         REFERENCES produit(id_produit)
-        ON DELETE CASCADE
+        
 );
 
 -- =====================================================
@@ -96,13 +91,13 @@ VALUES
 -- INSERTION DES PRODUITS
 -- =====================================================
 
-INSERT INTO produit (libelle, prix, stock, description)
+INSERT INTO produit (libelle, reference, prix, stock, description)
 VALUES
-('Ordinateur Portable HP', 450000, 10, 'HP Core i5 16Go RAM SSD 512Go'),
-('Souris Sans Fil', 15000, 50, 'Souris Bluetooth rechargeable'),
-('Clavier Mecanique', 35000, 25, 'Clavier RGB Gamer'),
-('Ecran 24 pouces', 120000, 15, 'Ecran Full HD'),
-('Imprimante Canon', 95000, 8, 'Imprimante multifonction');
+('Ordinateur Portable HP', "REF001",450000, 10, 'HP Core i5 16Go RAM SSD 512Go'),
+('Souris Sans Fil', "REF002",15000, 50, 'Souris Bluetooth rechargeable'),
+('Clavier Mecanique', "REF003",35000, 25, 'Clavier RGB Gamer'),
+('Ecran 24 pouces', "REF004",120000, 15, 'Ecran Full HD'),
+('Imprimante Canon', "REF005",95000, 8, 'Imprimante multifonction');
 
 -- =====================================================
 -- INSERTION DES COMMANDES
@@ -110,16 +105,16 @@ VALUES
 
 INSERT INTO commande (date_commande, montant_total, statut, id_client)
 VALUES
-('2026-05-10', 480000, 'Validee', 1),
-('2026-05-11', 15000, 'En attente', 2),
-('2026-05-12', 155000, 'Livree', 3),
-('2026-05-13', 545000, 'Validee', 1);
+('2026-05-10', 480000, 'SOLDEE', 1),
+('2026-05-11', 15000, 'NON SOLDEE', 2),
+('2026-05-12', 155000, 'SOLDEE', 3),
+('2026-05-13', 545000, 'SOLDEE', 1);
 
 -- =====================================================
 -- INSERTION DES LIGNES DE COMMANDES
 -- =====================================================
 
-INSERT INTO ligne_commande (
+INSERT INTO produit_commande (
     id_commande,
     id_produit,
     quantite,
@@ -172,7 +167,7 @@ SELECT
     lc.quantite,
     lc.prix_unitaire,
     (lc.quantite * lc.prix_unitaire) AS total_ligne
-FROM ligne_commande lc
+FROM produit_commande lc
 JOIN produit p
 ON lc.id_produit = p.id_produit
 JOIN commande co

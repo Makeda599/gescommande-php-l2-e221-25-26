@@ -3,7 +3,7 @@ $controllers=[
     "client"=>"client",
     "commande"=>"commande",
     "produit"=>"produit"
-    
+
 ];
 
  $controller=$_REQUEST["controller"]??"client";
@@ -16,4 +16,4 @@ $controllers=[
          exit();
 }
          
- require_once(ROOT."controller/".$controllers[$controller]."Controller.php");
+ require_once($path);

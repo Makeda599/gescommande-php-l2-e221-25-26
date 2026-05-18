@@ -1,4 +1,5 @@
 <?php
+function openConnexion() {
 function openConnection() {
     $con = null;
 try
@@ -6,12 +7,51 @@ try
     $con = new PDO('mysql:host=localhost;dbname=gestion_commande_l2E221_25_26;charset=utf8', 'root', '');
     $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $con->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    return $con;
 
 }catch (PDOException $e)
 {
     echo ('Erreur : ' . $e->getMessage());
 }
 
+
+}
+
+function closeConnexion($con){
+    $con=null;
+}
+
+// function excuteSelect($sql,$one=false){
+//       $datas=null;
+//     $pdo=openConnexion();
+//    $stm= $pdo->query($sql);
+//     $datas=$one==true?$stm->fetch():$stm->fetchAll();
+//     closeConnexion($pdo);
+//     return  $datas;
+    
+// }
+
+// function excuteUpdate($sql){
+
+// }
+
+function executeSelect(string $sql,array $data=[],$one=false) {
+        $result=null;
+        $conn=openConnexion();
+        $statement = $conn->prepare($sql);
+      count($data)==0?$statement->execute():$statement->execute($data);
+      $result=$one==true?$statement->fetch():$statement->fetchAll();
+        closeConnexion($conn);
+        return $result ;
+  
+}
+
+
+function executeUpdate(string $sql,array $data){
+    $conn=openConnexion();
+        $statement = $conn->prepare($sql);
+        $statement->execute($data);
+   closeConnexion($conn);
 return $con;
 }
 

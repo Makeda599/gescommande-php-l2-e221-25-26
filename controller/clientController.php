@@ -1,8 +1,8 @@
 <?php
 require_once ROOT."/model/clientModel.php";
 $liste=function(){
-    var_dump(getAllProduits());
 $clients = getAllclients();
+
 require_once(ROOT."view/clients/liste.php");
 };
 

@@ -1,5 +1,6 @@
 <?php
 function openConnexion() {
+function openConnection() {
     $con = null;
 try
 {
@@ -7,6 +8,7 @@ try
     $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $con->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     return $con;
+
 }catch (PDOException $e)
 {
     echo ('Erreur : ' . $e->getMessage());
@@ -50,4 +52,22 @@ function executeUpdate(string $sql,array $data){
         $statement = $conn->prepare($sql);
         $statement->execute($data);
    closeConnexion($conn);
+return $con;
+}
+
+function closeConnection($con){
+    $con=null;
+}
+
+function excuteSelect($sql,$one=false){
+      $datas=null;
+    $pdo=openConnection();
+   $stm= $pdo->query($sql);
+    $datas= $stm->fetchAll();
+    closeConnection($pdo);
+    return  $datas;
+    
+}
+function excuteUpdate($sql){
+
 }

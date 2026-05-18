@@ -11,3 +11,9 @@ function getClientById($id){
 
 
 
+   return excuteSelect($sql);
+}
+function getAllProduits(){
+    $sql="SELECT * FROM produit";
+   return excuteSelect($sql);
+}

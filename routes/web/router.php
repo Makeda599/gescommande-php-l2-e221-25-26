@@ -2,11 +2,13 @@
 $controllers=[
     "client"=>"client",
     "commande"=>"commande",
-    "produit"=>"produit"
-    
+    "produit"=>"produit",
+    "dashboard"=>"dashboard",
+    "auth"=>"auth"
+
 ];
 
- $controller=$_REQUEST["controller"]??"client";
+ $controller=$_REQUEST["controller"]??"dashboard";
  
  if (array_key_exists($controller, $controllers)) {
      $path=ROOT."controller/".$controllers[$controller]."Controller.php";
@@ -16,4 +18,4 @@ $controllers=[
          exit();
 }
          
- require_once(ROOT."controller/".$controllers[$controller]."Controller.php");
+ require_once($path);
